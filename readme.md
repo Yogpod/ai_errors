@@ -39,6 +39,14 @@ To integrate the AI Errors Reporter into your project, follow these steps:
 
 ![image](https://github.com/user-attachments/assets/8ee9cf34-44ae-42bb-9770-249671bb39a6)
 
+4. **Set Up OpenAI API Key**:
+   In the `ai_errors/server/sv_config.lua` folder, set your OpenAI API key:
+   ```lua
+   ai_errors.api_key = "YOUR_OPENAI_API_KEY"
+   ```
+   This is also available in the GUI, opened by command `ai_errors_config` shown above.
+   [OpenAI API Key Help](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key)
+
 ## Usage
 
 When errors occur, they are automatically reported using the `ai_errors.reportError` function. This function will handle:
