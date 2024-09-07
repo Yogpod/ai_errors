@@ -85,16 +85,16 @@ function ai_errors.SendToDiscord(response)
 	local webhook = ai_errors.webhook
 	if not webhook then return end
 	local data = {
-		username = "AI Errors",
-		avatar_url = "https://i.imgur.com/i5kQFmy.jpeg",
+		username = ai_errors.webhookName,
+		avatar_url = ai_errors.webhookAvatar,
 		embeds = {
 			{
-				title = "AI Error Analysis",
+				title = ai_errors.embedTitle,
 				description = response.content,
-				color = 15158332,
+				color = ai_errors.embedColor,
 				footer = {
-					text = "AI Errors Reporter",
-					icon_url = "https://i.imgur.com/i5kQFmy.jpeg"
+					text = ai_errors.embedFooterText,
+					icon_url = ai_errors.embedFooterAvatar
 				},
 				timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
 			}
