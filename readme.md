@@ -65,6 +65,10 @@ When an error is reported, the following data is formatted and sent to Discord:
 - Player information if applicable.
 - Relevant lines of code surrounding the error.
 
+<img src="https://github.com/user-attachments/assets/c82d8365-2796-402b-a055-1a932a0cd0f2" alt="1" width="250"/>
+<img src="https://github.com/user-attachments/assets/52e57434-02d9-4266-a5c7-934f5bc04767" alt="2" width="250"/>
+<img src="https://github.com/user-attachments/assets/d6809878-8370-4ec7-95e5-29b95f37e998" alt="3" width="250"/>
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or report issues.
