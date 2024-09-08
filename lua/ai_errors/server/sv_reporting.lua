@@ -26,7 +26,7 @@ function ai_errors.reportError(error, realm, stack, _, _, ply)
 		},
 		{
 			role = "user",
-			content = string.format("There was an error in the Garry's Mod code in the realm '%s'. Could you help diagnose and fix it? Here's the error:\n%s", realm, error)
+			content = string.format("There was an error in the Garry's Mod code in the realm '%s'. Could you help diagnose and fix it? Here's the error:\n%s\nInclude a formatted block containing the error at the beginning of your response.", realm, error)
 		}
 	}
 

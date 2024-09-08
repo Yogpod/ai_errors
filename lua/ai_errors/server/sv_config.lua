@@ -31,4 +31,11 @@ if file.Exists("ai_errors_config.txt", "DATA") then
 
 	ai_errors.clientsideErrors = config.clientsideErrors
 	ai_errors.apiKey = config.apiKey
+	ai_errors.webhook = config.webhook
+	ai_errors.webhookName = config.webhookName
+	ai_errors.webhookAvatar = config.webhookAvatar
+	ai_errors.embedTitle = config.embedTitle
+	ai_errors.embedColor = config.embedColor
+	ai_errors.embedFooterText = config.embedFooterText
+	ai_errors.embedFooterAvatar = config.embedFooterAvatar
 end

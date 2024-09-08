@@ -5,23 +5,25 @@ local function CreateTextEntry(parent, labelText, defaultText, censor)
 	label:Dock(TOP)
 	label:DockMargin(0, 0, 0, 5)
 	local entry = vgui.Create("DTextEntry", parent)
-	--entry:SetText(defaultText or "")
 	entry:Dock(TOP)
 	entry:DockMargin(0, 0, 0, 15)
+	local realValue = defaultText or ""
 	if censor then
+		entry:SetText(("*"):rep(#realValue))
 		entry.OnGetFocus = function(s)
-			s:SetText(defaultText)
-		end
-		entry.OnLoseFocus = function(s)
-			if s:GetText() ~= defaultText and s:GetText() ~= "" then
-				defaultText = s:GetText()
-				s.changed = true
-				s.newValue = s:GetText()
-			end
-			s:SetText(("*"):rep(#defaultText))
+			s:SetText(realValue)
+			s:SetCaretPos(#realValue)
 		end
 
-		entry:SetText(("*"):rep(#defaultText))
+		entry.OnLoseFocus = function(s)
+			if s:GetText() ~= "" then
+				realValue = s:GetText()
+				s.changed = true
+				s.newValue = realValue
+			end
+
+			s:SetText(("*"):rep(#realValue))
+		end
 	else
 		entry:SetText(defaultText or "")
 	end
@@ -78,7 +80,6 @@ function PANEL:Init()
 	saveButton.DoClick = function()
 		local newAPIKey = self.apiKeyEntry.changed and self.apiKeyEntry.newValue or ai_errors.apiKey
 		local newWebhook = self.webhookEntry.changed and self.webhookEntry.newValue or ai_errors.webhook
-
 		ai_errors.apiKey = newAPIKey
 		ai_errors.webhook = newWebhook
 		self.webhookEntry.changed = false
