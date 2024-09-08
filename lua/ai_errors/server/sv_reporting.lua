@@ -1,6 +1,11 @@
 local cachedErrors = {}
 local playerErrors = {}
 function ai_errors.reportError(error, realm, stack, _, _, ply)
+	if not ai_errors.apiKey then
+		ai_errors.Msg("No OpenAI API key set, not reporting error.")
+		return
+	end
+
 	-- Check if the error has already been reported
 	if cachedErrors[error] then return end
 	cachedErrors[error] = true
@@ -12,7 +17,7 @@ function ai_errors.reportError(error, realm, stack, _, _, ply)
 		if playerErrors[steamid] > 5 then return end
 	end
 
-	ai_errors.Msg(string.format("Error in realm '%s': %s", realm, error))
+	--ai_errors.Msg(string.format("Error in realm '%s': %s", realm, error))
 	local data = {}
 	local messages = {
 		{
@@ -21,7 +26,7 @@ function ai_errors.reportError(error, realm, stack, _, _, ply)
 		},
 		{
 			role = "user",
-			content = string.format("There was an error in the realm '%s'. Could you help diagnose and fix it? Here's the error:\n%s", realm, error)
+			content = string.format("There was an error in the Garry's Mod code in the realm '%s'. Could you help diagnose and fix it? Here's the error:\n%s", realm, error)
 		}
 	}
 
@@ -40,7 +45,7 @@ function ai_errors.reportError(error, realm, stack, _, _, ply)
 			local filePath, lineNumber = line.File, line.Line
 			if filePath and lineNumber then
 				if filePath:find("lua_run") then
-					ai_errors.Msg("Error occurred in lua_run, not reporting to AI.")
+					--ai_errors.Msg("Error occurred in lua_run, not reporting to AI.")
 					return
 				end
 
@@ -57,21 +62,12 @@ function ai_errors.reportError(error, realm, stack, _, _, ply)
 
 					--pyramids of gaza
 					if #stack == stacknum then
-						messages[2].content = messages[2].content .. "\n\nHere are the relevant code lines around the error:\n" .. table.concat(errorLines, "\n")
+						messages[2].content = messages[2].content .. "\n\nHere are the relevant code lines around the error, be specific and concise about your solution to my issue:\n" .. table.concat(errorLines, "\n")
 						ai_errors.SendMessage(data, function(response)
 							local responseTable = util.JSONToTable(response)
 							if responseTable and responseTable.choices then
-								local choice = responseTable.choices[1]
-								if choice then
-									local assistantMessage = choice.message
-									if assistantMessage then
-										if ai_errors.HTTP == HTTP then
-											ai_errors.Msg("AI Response: " .. assistantMessage)
-										else
-											ai_errors.SendToDiscord(assistantMessage)
-										end
-									end
-								end
+								local assistantMessage = responseTable.choices[1] and responseTable.choices[1].message
+								if assistantMessage then ai_errors.SendToDiscord(assistantMessage) end
 							end
 						end)
 					end
@@ -83,7 +79,11 @@ end
 
 function ai_errors.SendToDiscord(response)
 	local webhook = ai_errors.webhook
-	if not webhook then return end
+	if not webhook or not webhook:find("discord.com/api/webhooks/") then
+		ai_errors.Msg(response.content)
+		return
+	end
+
 	local data = {
 		username = ai_errors.webhookName,
 		avatar_url = ai_errors.webhookAvatar,

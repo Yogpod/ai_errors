@@ -13,7 +13,14 @@ ai_errors.embedFooterAvatar = "https://i.imgur.com/i5kQFmy.jpeg"
 ai_errors.saveConfig = function()
 	local config = {
 		clientsideErrors = ai_errors.clientsideErrors,
-		apiKey = ai_errors.apiKey
+		apiKey = ai_errors.apiKey,
+		webhook = ai_errors.webhook,
+		webhookName = ai_errors.webhookName,
+		webhookAvatar = ai_errors.webhookAvatar,
+		embedTitle = ai_errors.embedTitle,
+		embedColor = ai_errors.embedColor,
+		embedFooterText = ai_errors.embedFooterText,
+		embedFooterAvatar = ai_errors.embedFooterAvatar
 	}
 
 	file.Write("ai_errors_config.txt", util.TableToJSON(config))

@@ -3,6 +3,13 @@ net.Receive("ai_errors", function()
 	if action == "config" then
 		ai_errors.apiKey = net.ReadString()
 		ai_errors.clientsideErrors = net.ReadBool()
+		ai_errors.webhook = net.ReadString()
+		ai_errors.webhookName = net.ReadString()
+		ai_errors.webhookAvatar = net.ReadString()
+		ai_errors.embedTitle = net.ReadString()
+		ai_errors.embedColor = net.ReadUInt(32)
+		ai_errors.embedFooterText = net.ReadString()
+		ai_errors.embedFooterAvatar = net.ReadString()
 		vgui.Create("AIErrorsConfig")
 	elseif action == "msg" then
 		local msg = net.ReadString()
@@ -11,10 +18,7 @@ net.Receive("ai_errors", function()
 end)
 
 concommand.Add("ai_errors_config", function()
-	if not LocalPlayer():IsSuperAdmin() then
-		return
-	end
-
+	if not LocalPlayer():IsSuperAdmin() then return end
 	net.Start("ai_errors")
 	net.WriteString("askconfig")
 	net.SendToServer()
