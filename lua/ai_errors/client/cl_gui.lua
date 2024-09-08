@@ -1,13 +1,30 @@
-local function CreateTextEntry(parent, labelText, defaultText)
+local function CreateTextEntry(parent, labelText, defaultText, censor)
 	local label = vgui.Create("DLabel", parent)
 	label:SetText(labelText)
 	label:SetFont("DermaDefaultBold")
 	label:Dock(TOP)
 	label:DockMargin(0, 0, 0, 5)
 	local entry = vgui.Create("DTextEntry", parent)
-	entry:SetText(defaultText or "")
+	--entry:SetText(defaultText or "")
 	entry:Dock(TOP)
 	entry:DockMargin(0, 0, 0, 15)
+	if censor then
+		entry.OnGetFocus = function(s)
+			s:SetText(defaultText)
+		end
+		entry.OnLoseFocus = function(s)
+			if s:GetText() ~= defaultText and s:GetText() ~= "" then
+				defaultText = s:GetText()
+				s.changed = true
+				s.newValue = s:GetText()
+			end
+			s:SetText(("*"):rep(#defaultText))
+		end
+
+		entry:SetText(("*"):rep(#defaultText))
+	else
+		entry:SetText(defaultText or "")
+	end
 	return entry
 end
 
@@ -34,13 +51,13 @@ function PANEL:Init()
 	self:SetSize(ScrW() * 0.3, ScrH() * 0.5)
 	self:Center()
 	self:MakePopup()
-	self:SetTitle("AI Errors Configuration")
+	self:SetTitle("")
 	self:ShowCloseButton(true)
 	self:SetDraggable(true)
 	self:DockPadding(20, 30, 20, 20)
 	self.Paint = function(s, w, h)
 		draw.RoundedBox(8, 0, 0, w, h, Color(50, 50, 50, 255))
-		draw.SimpleText(self:GetTitle(), "DermaDefaultBold", w / 2, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		draw.SimpleText("AI Errors Configuration", "DermaDefaultBold", w / 2, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 	end
 
 	local scrollPanel = vgui.Create("DScrollPanel", self)
@@ -59,9 +76,14 @@ function PANEL:Init()
 	end
 
 	saveButton.DoClick = function()
-		ai_errors.apiKey = self.apiKeyEntry:GetText() or ai_errors.apiKey
+		local newAPIKey = self.apiKeyEntry.changed and self.apiKeyEntry.newValue or ai_errors.apiKey
+		local newWebhook = self.webhookEntry.changed and self.webhookEntry.newValue or ai_errors.webhook
+
+		ai_errors.apiKey = newAPIKey
+		ai_errors.webhook = newWebhook
+		self.webhookEntry.changed = false
+		self.apiKeyEntry.changed = false
 		ai_errors.clientsideErrors = self.clientsideErrorsEntry:GetChecked() or ai_errors.clientsideErrors
-		ai_errors.webhook = self.webhookEntry:GetText() or ai_errors.webhook
 		ai_errors.webhookName = self.webhookNameEntry:GetText() or ai_errors.webhookName
 		ai_errors.webhookAvatar = self.webhookAvatarEntry:GetText() or ai_errors.webhookAvatar
 		ai_errors.embedTitle = self.embedTitleEntry:GetText() or ai_errors.embedTitle
@@ -86,7 +108,7 @@ end
 
 function PANEL:CreateUI(parent)
 	-- OpenAI API Key Section
-	self.apiKeyEntry = CreateTextEntry(parent, "OpenAI API Key:", ai_errors.apiKey)
+	self.apiKeyEntry = CreateTextEntry(parent, "OpenAI API Key:", ai_errors.apiKey, true)
 	-- Client-side Errors Checkbox
 	self.clientsideErrorsEntry = CreateCheckBoxEntry(parent, "CL Errors", ai_errors.clientsideErrors)
 	-- Warning Label
@@ -98,7 +120,7 @@ function PANEL:CreateUI(parent)
 	warningLabel:DockMargin(0, 0, 0, 5)
 	warningLabel:SetWrap(true)
 	-- Webhook URL Section
-	self.webhookEntry = CreateTextEntry(parent, "Webhook URL:", ai_errors.webhook)
+	self.webhookEntry = CreateTextEntry(parent, "Webhook URL:", ai_errors.webhook, true)
 	-- Webhook Name Section
 	self.webhookNameEntry = CreateTextEntry(parent, "Webhook Name:", ai_errors.webhookName)
 	-- Webhook Avatar Section
