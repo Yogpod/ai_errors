@@ -36,8 +36,7 @@ To integrate the AI Errors Reporter into your project, follow these steps:
    ai_errors.webhook = "YOUR_DISCORD_WEBHOOK_URL"
    ```
    This is also available in the GUI, opened by command `ai_errors_config` shown below.
-
-![image](https://github.com/user-attachments/assets/8ee9cf34-44ae-42bb-9770-249671bb39a6)
+![gmod_Nn1QPmJxeo](https://github.com/user-attachments/assets/198399bd-025b-4de3-b753-c27c879a82b7)
 
 4. **Set Up OpenAI API Key**:
    In the `ai_errors/server/sv_config.lua` folder, set your OpenAI API key:
