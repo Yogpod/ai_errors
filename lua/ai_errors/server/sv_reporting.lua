@@ -33,7 +33,7 @@ function ai_errors.reportError(error, realm, stack, _, _, ply)
 	data.model = "gpt-4o-mini"
 	data.messages = messages
 	if ply then
-		local playerInfo = string.format("The error occurred for the player: %s (ID: %s)", ply:Nick(), ply:SteamID())
+		local playerInfo = string.format("The error occurred for the player: %s (ID: %s) Include this information near the top of your response below the error.", ply:Nick(), ply:SteamID())
 		messages[2].content = messages[2].content .. "\n\n" .. playerInfo
 	end
 
