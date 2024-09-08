@@ -2,7 +2,13 @@
 
 ai_errors.clientsideErrors = false -- Set to true to report clientside errors
 ai_errors.apiKey = ""
-ai_errors.webhook = "" --https://discord.com/api/webhooks/1234567/abcdefg
+ai_errors.webhook = "" -- https://discord.com/api/webhooks/1234567/abcdefg
+ai_errors.webhookName = "AI Errors"
+ai_errors.webhookAvatar = "https://i.imgur.com/i5kQFmy.jpeg"
+ai_errors.embedTitle = "AI Error Analysis"
+ai_errors.embedColor = 15158332 -- https://www.spycolor.com/
+ai_errors.embedFooterText = "AI Errors Reporter"
+ai_errors.embedFooterAvatar = "https://i.imgur.com/i5kQFmy.jpeg"
 
 ai_errors.saveConfig = function()
 	local config = {
