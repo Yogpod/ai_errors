@@ -27,6 +27,11 @@ function ai_errors.ReadFile(path, cb)
 		return
 	end
 
+	if not file.Exists(path, "LUA") then
+		cb(false)
+		return
+	end
+
 	local original, newPath = ai_errors.CleanPath(path)
 	file.AsyncRead(newPath, "LUA", function(fileName, gamePath, status, data)
 		if (status == FSASYNC_OK) then
