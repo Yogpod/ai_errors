@@ -1,4 +1,3 @@
-ai_errors = ai_errors or {}
 ai_errors.luacache = ai_errors.luacache or {}
 ai_errors.luacache.paths = {}
 ai_errors.luacache.files = {}
