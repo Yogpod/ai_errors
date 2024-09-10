@@ -1,4 +1,4 @@
-local function sendError(error, stack)
+local function sendError(error, _, stack)
 	net.Start("ai_errors")
 	net.WriteString("error")
 	net.WriteString(error)
@@ -6,6 +6,4 @@ local function sendError(error, stack)
 	net.SendToServer()
 end
 
-hook.Add("OnLuaError", "ai_errors", function(err, realm, stack)
-	sendError(err, stack)
-end)
+hook.Add("OnLuaError", "ai_errors", sendError)

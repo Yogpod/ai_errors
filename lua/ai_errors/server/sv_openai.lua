@@ -1,6 +1,6 @@
 function ai_errors.SendMessage(data, cb)
 	local apiKey = ai_errors.apiKey
-	if not apiKey then
+	if not apiKey or apiKey == "" then
 		ai_errors.Msg("No API key set, cannot send message")
 		return
 	end
