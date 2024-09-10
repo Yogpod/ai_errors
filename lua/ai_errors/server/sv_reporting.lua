@@ -1,7 +1,7 @@
 local cachedErrors = {}
 local playerErrors = {}
 function ai_errors.reportError(error, realm, stack, _, _, ply)
-	if not ai_errors.apiKey then
+	if not ai_errors.apiKey or ai_errors.apiKey == "" then
 		ai_errors.Msg("No OpenAI API key set, not reporting error.")
 		return
 	end

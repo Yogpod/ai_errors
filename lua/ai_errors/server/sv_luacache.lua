@@ -3,19 +3,21 @@ ai_errors.luacache.paths = {}
 ai_errors.luacache.files = {}
 
 local paths, files = ai_errors.luacache.paths, ai_errors.luacache.files
+local lower = string.lower
+local gsub = string.gsub
 
 function ai_errors.CleanPath(src)
 	src = tostring(src)
 	if paths[src] then return src, paths[src] end
 	local original = src
 	if src == "0" or src == "" then src = "_1_" end
-	src = src:lower()
-	src = src:gsub("@", "")
-	src = src:gsub("^addons/[^/]+/lua/", "")
-	src = src:gsub("^addons/[^/]+/gamemodes/", "")
-	src = src:gsub("^addons/[^/]+/", "")
-	src = src:gsub("^lua/", "")
-	src = src:gsub("^gamemodes/", "")
+	src = lower(src)
+	src = gsub(src, "@", "")
+	src = gsub(src, "^addons/[^/]+/lua/", "")
+	src = gsub(src, "^addons/[^/]+/gamemodes/", "")
+	src = gsub(src, "^addons/[^/]+/", "")
+	src = gsub(src, "^lua/", "")
+	src = gsub(src, "^gamemodes/", "")
 	paths[original] = src
 	return original, src
 end
