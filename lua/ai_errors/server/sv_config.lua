@@ -54,3 +54,9 @@ end
 ai_errors.useAnthropic = ai_errors.apiKey:match("sk-ant-api") ~= nil
 ai_errors.model = ai_errors.useAnthropic and "claude-3-haiku-20240307" or "gpt-4o-mini" --"claude-3-5-sonnet" sonnet is kinda expensive
 ai_errors.saveConfig()
+
+ai_errors.Msg("Configuration loaded.")
+ai_errors.Msg("Clientside errors: " .. (ai_errors.clientsideErrors and "enabled" or "disabled"))
+ai_errors.Msg("Using AI Service: " .. (ai_errors.useAnthropic and "Anthropic" or "OpenAI"))
+ai_errors.Msg("API Key: " .. ai_errors.apiKey:sub(1, 10) .. string.rep("*", #ai_errors.apiKey - 10))
+ai_errors.Msg("Model: " .. ai_errors.model)
