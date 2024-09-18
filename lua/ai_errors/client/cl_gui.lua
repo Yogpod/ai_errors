@@ -80,34 +80,34 @@ function PANEL:Init()
 	end
 
 	saveButton.DoClick = function()
-		local newAPIKey = self.apiKeyEntry.changed and self.apiKeyEntry.newValue or ai_errors.apiKey
+		local newAPIKey = self.apiKeyEntry.changed and self.apiKeyEntry.newValue or ai_errors.apikey
 		local newWebhook = self.webhookEntry.changed and self.webhookEntry.newValue or ai_errors.webhook
-		ai_errors.apiKey = newAPIKey
+		ai_errors.apikey = newAPIKey
 		ai_errors.webhook = newWebhook
 		self.webhookEntry.changed = false
 		self.apiKeyEntry.changed = false
 		ai_errors.model = self.modelEntry:GetText() or ai_errors.model
-		ai_errors.clientsideErrors = self.clientsideErrorsEntry:GetChecked() or ai_errors.clientsideErrors
-		ai_errors.useAnthropic = self.useAnthropicEntry:GetChecked() or ai_errors.useAnthropic
-		ai_errors.webhookName = self.webhookNameEntry:GetText() or ai_errors.webhookName
-		ai_errors.webhookAvatar = self.webhookAvatarEntry:GetText() or ai_errors.webhookAvatar
-		ai_errors.embedTitle = self.embedTitleEntry:GetText() or ai_errors.embedTitle
-		ai_errors.embedColor = tonumber(self.embedColorEntry:GetText():gsub("#", ""), 16) or ai_errors.embedColor
-		ai_errors.embedFooterText = self.embedFooterTextEntry:GetText() or ai_errors.embedFooterText
-		ai_errors.embedFooterAvatar = self.embedFooterAvatarEntry:GetText() or ai_errors.embedFooterAvatar
+		ai_errors.clientsideerrors = self.clientsideErrorsEntry:GetChecked() or ai_errors.clientsideerrors
+		ai_errors.useanthropic = self.useAnthropicEntry:GetChecked() or ai_errors.useanthropic
+		ai_errors.webhookname = self.webhookNameEntry:GetText() or ai_errors.webhookname
+		ai_errors.webhookavatar = self.webhookAvatarEntry:GetText() or ai_errors.webhookavatar
+		ai_errors.embedtitle = self.embedTitleEntry:GetText() or ai_errors.embedtitle
+		ai_errors.embedcolor = tonumber(self.embedColorEntry:GetText():gsub("#", ""), 16) or ai_errors.embedcolor
+		ai_errors.embedfootertext = self.embedFooterTextEntry:GetText() or ai_errors.embedfootertext
+		ai_errors.embedfooteravatar = self.embedFooterAvatarEntry:GetText() or ai_errors.embedfooteravatar
 		net.Start("ai_errors")
 		net.WriteString("config")
-		net.WriteString(ai_errors.apiKey)
+		net.WriteString(ai_errors.apikey)
 		net.WriteString(ai_errors.model)
-		net.WriteBool(ai_errors.clientsideErrors)
-		net.WriteBool(ai_errors.useAnthropic)
+		net.WriteBool(ai_errors.clientsideerrors)
+		net.WriteBool(ai_errors.useanthropic)
 		net.WriteString(ai_errors.webhook)
-		net.WriteString(ai_errors.webhookName)
-		net.WriteString(ai_errors.webhookAvatar)
-		net.WriteString(ai_errors.embedTitle)
-		net.WriteUInt(ai_errors.embedColor, 32)
-		net.WriteString(ai_errors.embedFooterText)
-		net.WriteString(ai_errors.embedFooterAvatar)
+		net.WriteString(ai_errors.webhookname)
+		net.WriteString(ai_errors.webhookavatar)
+		net.WriteString(ai_errors.embedtitle)
+		net.WriteUInt(ai_errors.embedcolor, 32)
+		net.WriteString(ai_errors.embedfootertext)
+		net.WriteString(ai_errors.embedfooteravatar)
 		net.SendToServer()
 		self:Close()
 	end
@@ -115,11 +115,11 @@ end
 
 function PANEL:CreateUI(parent)
 	-- OpenAI API Key Section
-	self.apiKeyEntry = CreateTextEntry(parent, "OpenAI API Key:", ai_errors.apiKey, true)
+	self.apiKeyEntry = CreateTextEntry(parent, "OpenAI API Key:", ai_errors.apikey, true)
 	-- Model Section
 	self.modelEntry = CreateTextEntry(parent, "Model:", ai_errors.model, false, true)
 	-- Client-side Errors Checkbox
-	self.clientsideErrorsEntry = CreateCheckBoxEntry(parent, "CL Errors", ai_errors.clientsideErrors)
+	self.clientsideErrorsEntry = CreateCheckBoxEntry(parent, "CL Errors", ai_errors.clientsideerrors)
 	-- Warning Label
 	local warningLabel = vgui.Create("DLabel", parent)
 	warningLabel:SetText("Warning: Enabling CL Errors can lead to spam and increased costs!")
@@ -129,21 +129,21 @@ function PANEL:CreateUI(parent)
 	warningLabel:DockMargin(0, 0, 0, 5)
 	warningLabel:SetWrap(true)
 	-- Anthropic Checkbox
-	self.useAnthropicEntry = CreateCheckBoxEntry(parent, "Use Claude", ai_errors.useAnthropic, false, true)
+	self.useAnthropicEntry = CreateCheckBoxEntry(parent, "Use Claude", ai_errors.useanthropic, false, true)
 	-- Webhook URL Section
 	self.webhookEntry = CreateTextEntry(parent, "Webhook URL:", ai_errors.webhook, true)
 	-- Webhook Name Section
-	self.webhookNameEntry = CreateTextEntry(parent, "Webhook Name:", ai_errors.webhookName)
+	self.webhookNameEntry = CreateTextEntry(parent, "Webhook Name:", ai_errors.webhookname)
 	-- Webhook Avatar Section
-	self.webhookAvatarEntry = CreateTextEntry(parent, "Webhook Avatar URL:", ai_errors.webhookAvatar)
+	self.webhookAvatarEntry = CreateTextEntry(parent, "Webhook Avatar URL:", ai_errors.webhookavatar)
 	-- Embed Title Section
-	self.embedTitleEntry = CreateTextEntry(parent, "Embed Title:", ai_errors.embedTitle)
+	self.embedTitleEntry = CreateTextEntry(parent, "Embed Title:", ai_errors.embedtitle)
 	-- Embed Color Section
-	self.embedColorEntry = CreateTextEntry(parent, "Embed Color (Hex):", string.format("#%06x", ai_errors.embedColor or 15158332))
+	self.embedColorEntry = CreateTextEntry(parent, "Embed Color (Hex):", string.format("#%06x", ai_errors.embedcolor or 15158332))
 	-- Embed Footer Text Section
-	self.embedFooterTextEntry = CreateTextEntry(parent, "Embed Footer Text:", ai_errors.embedFooterText)
+	self.embedFooterTextEntry = CreateTextEntry(parent, "Embed Footer Text:", ai_errors.embedfootertext)
 	-- Embed Footer Avatar Section
-	self.embedFooterAvatarEntry = CreateTextEntry(parent, "Embed Footer Avatar URL:", ai_errors.embedFooterAvatar)
+	self.embedFooterAvatarEntry = CreateTextEntry(parent, "Embed Footer Avatar URL:", ai_errors.embedfooteravatar)
 end
 
 vgui.Register("AIErrorsConfig", PANEL, "DFrame")

@@ -1,14 +1,14 @@
 local cachedErrors = {}
 local playerErrors = {}
 function ai_errors.SendMessage(data, cb)
-	local apiKey = ai_errors.apiKey
-	local useAnthropic = ai_errors.useAnthropic
-	if not apiKey or apiKey == "" then
+	local apikey = ai_errors.apikey
+	local useanthropic = ai_errors.useanthropic
+	if not apikey or apikey == "" then
 		ai_errors.Msg("No API key set, cannot send message")
 		return
 	end
 
-	if useAnthropic then
+	if useanthropic then
 		ai_errors.SendMessageToAnthropic(data, cb)
 	else
 		ai_errors.SendMessageToOpenAI(data, cb)
@@ -25,7 +25,7 @@ function ai_errors.SendMessageToOpenAI(data, cb)
 		parameters = data,
 		headers = {
 			["Content-Type"] = "application/json",
-			["Authorization"] = "Bearer " .. ai_errors.apiKey
+			["Authorization"] = "Bearer " .. ai_errors.apikey
 		},
 		body = data,
 		success = function(code, body, headers)
@@ -58,7 +58,7 @@ function ai_errors.SendMessageToAnthropic(data, cb)
 		method = "POST",
 		headers = {
 			["Content-Type"] = "application/json",
-			["X-API-Key"] = ai_errors.apiKey,
+			["X-API-Key"] = ai_errors.apikey,
 			["anthropic-version"] = "2023-06-01"
 		},
 		body = jsonBody,
@@ -89,8 +89,8 @@ function ai_errors.SendMessageToAnthropic(data, cb)
 end
 
 function ai_errors.reportError(error, realm, stack, _, _, ply)
-	if not ai_errors.apiKey or ai_errors.apiKey == "" then
-		ai_errors.Msg(string.format("No %s API key set, cannot send message", ai_errors.useAnthropic and "Anthropic" or "OpenAI"))
+	if not ai_errors.apikey or ai_errors.apikey == "" then
+		ai_errors.Msg(string.format("No %s API key set, cannot send message", ai_errors.useanthropic and "Anthropic" or "OpenAI"))
 		return
 	end
 
@@ -177,16 +177,16 @@ function ai_errors.SendToDiscord(response)
 	end
 
 	local data = {
-		username = ai_errors.webhookName,
-		avatar_url = ai_errors.webhookAvatar,
+		username = ai_errors.webhookname,
+		avatar_url = ai_errors.webhookavatar,
 		embeds = {
 			{
-				title = ai_errors.embedTitle,
+				title = ai_errors.embedtitle,
 				description = response.content,
-				color = ai_errors.embedColor,
+				color = ai_errors.embedcolor,
 				footer = {
-					text = ai_errors.embedFooterText,
-					icon_url = ai_errors.embedFooterAvatar
+					text = ai_errors.embedfootertext,
+					icon_url = ai_errors.embedfooteravatar
 				},
 				timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
 			}
