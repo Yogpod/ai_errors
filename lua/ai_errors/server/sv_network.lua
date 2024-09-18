@@ -86,7 +86,15 @@ local translate = {
 
 concommand.Add("ai_errors", function(ply, cmd, args)
 	if IsValid(ply) and not ply:IsSuperAdmin() then return end
-	if not args[1] then return end
+	if not args[1] then
+		if IsValid(ply) then
+			ai_errors.PlyMsg(ply, "Usage: ai_errors <set>")
+		else
+			ai_errors.Msg("Usage: ai_errors <set>")
+		end
+		return
+	end
+
 	local action = args[1]:lower()
 	if action == "set" then
 		if not args[2] or not args[3] then

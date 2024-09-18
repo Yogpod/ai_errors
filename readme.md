@@ -36,7 +36,9 @@ To integrate the AI Errors Reporter into your project, follow these steps:
    ai_errors.webhook = "YOUR_DISCORD_WEBHOOK_URL"
    ```
    This is also available in the GUI, opened by command `ai_errors_config` shown below.
+   In addition, the `ai_errors` "set" command can be used to set the webhook URL from console.
 ![gmod_Nn1QPmJxeo](https://github.com/user-attachments/assets/198399bd-025b-4de3-b753-c27c879a82b7)
+
 
 4. **Set Up API Key**:
    In the `ai_errors/server/sv_config.lua` folder, set your API key:
@@ -44,6 +46,7 @@ To integrate the AI Errors Reporter into your project, follow these steps:
    ai_errors.apikey = "YOUR_AI_API_KEY"
    ```
    This is also available in the GUI, opened by command `ai_errors_config` shown above.
+   In addition, the `ai_errors` "set" command can be used to set the webhook URL from console.
    [OpenAI API Key Help](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key)
 
    You can also use anthropic's claude, just set a claude API key in the config file.
