@@ -13,7 +13,6 @@ end
 include("ai_errors/server/sv_config.lua")
 include("ai_errors/server/sv_luacache.lua")
 include("ai_errors/server/sv_network.lua")
-include("ai_errors/server/sv_openai.lua")
 include("ai_errors/server/sv_reporting.lua")
 
 AddCSLuaFile("ai_errors/cl_init.lua")

@@ -19,7 +19,9 @@ net.Receive("ai_errors", function(len, ply)
 		net.Start("ai_errors")
 		net.WriteString("config")
 		net.WriteString(ai_errors.apiKey)
+		net.WriteString(ai_errors.model)
 		net.WriteBool(ai_errors.clientsideErrors)
+		net.WriteBool(ai_errors.useAnthropic)
 		net.WriteString(ai_errors.webhook)
 		net.WriteString(ai_errors.webhookName)
 		net.WriteString(ai_errors.webhookAvatar)
@@ -32,7 +34,9 @@ net.Receive("ai_errors", function(len, ply)
 		if not ply:IsSuperAdmin() then return end
 		--this can be done better but i do not really care about this addon's UI
 		local apiKey = net.ReadString()
+		local model = net.ReadString()
 		local clientsideErrors = net.ReadBool()
+		local useAnthropic = net.ReadBool()
 		local webhook = net.ReadString()
 		local webhookName = net.ReadString()
 		local webhookAvatar = net.ReadString()
@@ -41,7 +45,9 @@ net.Receive("ai_errors", function(len, ply)
 		local embedFooterText = net.ReadString()
 		local embedFooterAvatar = net.ReadString()
 		ai_errors.apiKey = apiKey
+		ai_errors.model = model
 		ai_errors.clientsideErrors = clientsideErrors
+		ai_errors.useAnthropic = useAnthropic
 		ai_errors.webhook = webhook
 		ai_errors.webhookName = webhookName
 		ai_errors.webhookAvatar = webhookAvatar
@@ -52,4 +58,31 @@ net.Receive("ai_errors", function(len, ply)
 		ai_errors.saveConfig()
 		ai_errors.PlyMsg(ply, "Configuration saved.")
 	end
+end)
+
+local allowed = {
+	["apikey"] = true,
+	["clientsideerrors"] = true,
+	["webhook"] = true,
+	["webhookname"] = true,
+	["webhookavatar"] = true,
+	["embedtitle"] = true,
+	["embedcolor"] = true,
+	["embedfootertext"] = true,
+	["embedfooteravatar"] = true
+}
+
+concommand.Add("ai_errors_set", function(ply, cmd, args)
+	if IsValid(ply) and not ply:IsSuperAdmin() then return end
+	local key = args[1]
+	local value = args[2]
+	if not allowed[key:lower()] then return end
+	if allowed[key:lower()] and ai_errors[key] == nil then
+		ai_errors.PlyMsg(ply, string.format("Invalid key: %s", key))
+		return
+	end
+	ai_errors[key] = value
+	ai_errors.saveConfig()
+	ai_errors.PlyMsg(ply, "Configuration saved.")
+	ai_errors.Msg(string.format("Configuration saved: %s = %s", key, value))
 end)

@@ -38,13 +38,16 @@ To integrate the AI Errors Reporter into your project, follow these steps:
    This is also available in the GUI, opened by command `ai_errors_config` shown below.
 ![gmod_Nn1QPmJxeo](https://github.com/user-attachments/assets/198399bd-025b-4de3-b753-c27c879a82b7)
 
-4. **Set Up OpenAI API Key**:
-   In the `ai_errors/server/sv_config.lua` folder, set your OpenAI API key:
+4. **Set Up API Key**:
+   In the `ai_errors/server/sv_config.lua` folder, set your API key:
    ```lua
-   ai_errors.api_key = "YOUR_OPENAI_API_KEY"
+   ai_errors.apiKey = "YOUR_AI_API_KEY"
    ```
    This is also available in the GUI, opened by command `ai_errors_config` shown above.
    [OpenAI API Key Help](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key)
+
+   You can also use anthropic's claude, just set a claude API key in the config file.
+   [Claude API Key Help](https://console.anthropic.com/settings/keys)
 
 ## Usage
 
@@ -86,6 +89,7 @@ This project is licensed under the MIT License. See the LICENSE file for more de
 ## Acknowledgments
 
 - Thanks to the developers at OpenAI for the AI models used in this project.
+- Thanks to the developers at Anthropic for the AI models used in this project.
 - Thanks to the Discord team for providing webhook support.
 
 ## Contact

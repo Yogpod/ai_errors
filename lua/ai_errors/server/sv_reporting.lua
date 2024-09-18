@@ -1,8 +1,96 @@
 local cachedErrors = {}
 local playerErrors = {}
+function ai_errors.SendMessage(data, cb)
+	local apiKey = ai_errors.apiKey
+	local useAnthropic = ai_errors.useAnthropic
+	if not apiKey or apiKey == "" then
+		ai_errors.Msg("No API key set, cannot send message")
+		return
+	end
+
+	if useAnthropic then
+		ai_errors.SendMessageToAnthropic(data, cb)
+	else
+		ai_errors.SendMessageToOpenAI(data, cb)
+	end
+end
+
+--TODO: Make this use the messages api instead of the chat api
+function ai_errors.SendMessageToOpenAI(data, cb)
+	data.temperature = 0.7
+	data = util.TableToJSON(data)
+	ai_errors.HTTP({
+		url = "https://api.openai.com/v1/chat/completions",
+		method = "POST",
+		parameters = data,
+		headers = {
+			["Content-Type"] = "application/json",
+			["Authorization"] = "Bearer " .. ai_errors.apiKey
+		},
+		body = data,
+		success = function(code, body, headers)
+			local response = util.JSONToTable(body)
+			if response.error then
+				ai_errors.Msg("Error from OpenAI: " .. response.error.message)
+				return
+			end
+
+			cb(response)
+		end,
+		failed = function(reason) ai_errors.Msg("Failed to send message to OpenAI: " .. reason) end
+	})
+end
+
+function ai_errors.SendMessageToAnthropic(data, cb)
+	local messages = data.messages
+	messages[1].role = "user"
+	messages[1].content = messages[1].content .. "\n\n" .. messages[2].content
+	messages[2] = nil
+	local jsonBody = util.TableToJSON({
+		max_tokens = 4096,
+		model = data.model, --"claude-3.5-sonnet" or "gpt-4o-mini" or whatever it's set to
+		messages = messages
+	})
+
+	jsonBody = jsonBody:gsub("4096.0", "4096") --thanks gmod, https://wiki.facepunch.com/gmod/util.TableToJSON
+	ai_errors.HTTP({
+		url = "https://api.anthropic.com/v1/messages",
+		method = "POST",
+		headers = {
+			["Content-Type"] = "application/json",
+			["X-API-Key"] = ai_errors.apiKey,
+			["anthropic-version"] = "2023-06-01"
+		},
+		body = jsonBody,
+		success = function(code, body, headers)
+			if cb then
+				local response = util.JSONToTable(body)
+				if response.error then
+					ai_errors.Msg("Error from Anthropic: " .. response.error.message)
+					return
+				end
+
+				--match the response format of OpenAI
+				local newResponse = {
+					choices = {
+						{
+							message = {
+								content = response.content[1].text
+							}
+						}
+					}
+				}
+
+				cb(newResponse)
+			end
+		end,
+		failed = function(reason) ai_errors.Msg("Failed to send message to Anthropic: " .. reason) end
+	})
+end
+
 function ai_errors.reportError(error, realm, stack, _, _, ply)
 	if not ai_errors.apiKey or ai_errors.apiKey == "" then
-		ai_errors.Msg("No OpenAI API key set, not reporting error.")
+		ai_errors.Msg(string.format("No %s API key set, cannot send message", ai_errors.useAnthropic and "Anthropic" or "OpenAI"))
 		return
 	end
 
@@ -30,7 +118,7 @@ function ai_errors.reportError(error, realm, stack, _, _, ply)
 		}
 	}
 
-	data.model = "gpt-4o-mini"
+	data.model = ai_errors.model
 	data.messages = messages
 	if ply then
 		local playerInfo = string.format("The error occurred for the player: %s (ID: %s) Include this information near the top of your response below the error.", ply:Nick(), ply:SteamID())
@@ -49,7 +137,7 @@ function ai_errors.reportError(error, realm, stack, _, _, ply)
 					return
 				end
 
-				ai_errors.ReadFile(filePath, function(fileContent)
+				ai_errors.ReadFile(filePath, function(fileContent, status)
 					if fileContent then
 						local lines = string.Explode("\n", fileContent)
 						local lineNum = tonumber(lineNumber)
@@ -58,16 +146,20 @@ function ai_errors.reportError(error, realm, stack, _, _, ply)
 						for i = start, finish do
 							table.insert(errorLines, string.format("%d: %s", i, lines[i]))
 						end
+					else
+						ai_errors.Msg("Failed to read file: " .. filePath .. " (" .. status .. ")")
 					end
 
 					--pyramids of gaza
 					if #stack == stacknum then
 						messages[2].content = messages[2].content .. "\n\nHere are the relevant code lines around the error, be specific and concise about your solution to my issue:\n" .. table.concat(errorLines, "\n")
 						ai_errors.SendMessage(data, function(response)
-							local responseTable = util.JSONToTable(response)
 							if responseTable and responseTable.choices then
 								local assistantMessage = responseTable.choices[1] and responseTable.choices[1].message
-								if assistantMessage then ai_errors.SendToDiscord(assistantMessage) end
+								if assistantMessage then
+									ai_errors.SendToDiscord(assistantMessage)
+									ai_errors.Msg("Error reported to AI: " .. error)
+								end
 							end
 						end)
 					end
